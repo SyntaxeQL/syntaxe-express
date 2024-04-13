@@ -2,7 +2,7 @@ import { flags, scanDirectives, filterSchema, walkThroughHandler } from './lib/e
 
 const SyntaxeIO = new Object();
 
-SyntaxeIO.apply = (config = null) => {
+SyntaxeIO.init = (config = null) => {
 	if (!config || !config.app)
 		throw new Error('No app detected.');
 
@@ -16,7 +16,7 @@ const SyntaxeRequestGate = class {
 	}
 
 	async #request(req, res, next) {
-		const { resolve, schema, client } = scanDirectives(req);
+		const { resolve, schema, client } = scanDirectives(req, res);
 
 		const enabledStatus = req.app.get('syntaxeEnabledStatus');
 		
@@ -24,7 +24,12 @@ const SyntaxeRequestGate = class {
 
 		if (enabledStatus && resolve) {
 			res.syntaxeSchema = await filterSchema(schema);
-			new SyntaxeResponseGate(res);
+			if (res.syntaxeSchema.status)
+				new SyntaxeResponseGate(res);
+			else {
+				res.set('Syntaxe-Schema-Resolved', false);
+				res.set('Syntaxe-Schema-Resolved-Error', 'Query failed. Check your schema and try again.');
+			}
 		}
 
 		next();

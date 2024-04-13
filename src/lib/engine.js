@@ -38,18 +38,30 @@ const findDayIndex = (day) => {
 };
 
 // scan request for directives
-const scanDirectives = (req) => {
+const scanDirectives = (req, res) => {
 	let resolve = false, schema = String(), client = false;
-	// check if schema and client defined
-	for (let header in req.headers) {
-		if (header.toLowerCase() == flags.resolve.toLowerCase()) {
-			resolve = true; schema = atob(req.headers[header]);
-		} else if (header.toLowerCase() == flags.client.toLowerCase()) {
-			client = true;
-		}
-	}
 
-	return { resolve, schema, client };
+	try {
+		// check if schema and client defined
+		for (let header in req.headers) {
+			if (header.toLowerCase() == flags.resolve.toLowerCase()) {
+				resolve = true; schema = atob(req.headers[header]);
+			} else if (header.toLowerCase() == flags.client.toLowerCase()) {
+				client = true;
+			}
+		}
+
+		return { resolve, schema, client };
+	} catch(err) {
+		res.set('Syntaxe-Schema-Resolved', false);
+		res.set('Syntaxe-Schema-Resolved-Error', String(err));
+		console.error({
+			date: new Date(),
+			error: err
+		});
+
+		return { resolve: false };
+	}
 };
 
 // filter operations
@@ -239,9 +251,8 @@ const walkThroughHandler = async({ data, res }) => {
 
 		return JSON.stringify(result);
 	} catch(err) {
-		// response header
 		res.set('Syntaxe-Schema-Resolved', false);
-		// log error and schema
+		res.set('Syntaxe-Schema-Resolved-Error', String(err));
 		console.error({
 			date: new Date(),
 			error: err,

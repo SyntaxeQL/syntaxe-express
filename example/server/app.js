@@ -10,17 +10,17 @@ import SyntaxeIO from '../../dist/index.min.js';
 
 const app = express();
 
-///////////////////////////
-// Add syntaxe io object //
-///////////////////////////
-SyntaxeIO.apply({
+////////////////////////////
+// Add syntaxe middleware //
+////////////////////////////
+SyntaxeIO.init({
 	enabled: true,
 	app: app
 });
 
 app.get('/', (req, res) => {
 	res.status(200).json({
-		message: 'Welcome to the syntaxe-express example.'
+		message: 'This is a syntaxe-enabled express.js application.'
 	});
 });
 
