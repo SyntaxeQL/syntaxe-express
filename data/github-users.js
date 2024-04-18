@@ -2,7 +2,7 @@
 Author: GitHub
 Url: https://api.github.com/users
 */
-export default [
+module.exports = [
   {
     "login": "mojombo",
     "id": 1,

@@ -1,6 +1,6 @@
 import { flags, scanDirectives, filterSchema, walkThroughHandler } from './lib/engine.js';
 
-const SyntaxeIO = new Object();
+export const SyntaxeIO = new Object();
 
 SyntaxeIO.init = (config = null) => {
 	if (!config || !config.app)
@@ -57,5 +57,3 @@ const SyntaxeResponseGate = class {
 		this.#send.call(this.#response, this.#data);
 	}
 }
-
-export default SyntaxeIO;

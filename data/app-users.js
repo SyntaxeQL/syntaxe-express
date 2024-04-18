@@ -2,7 +2,7 @@
 Author: Olushola Lana
 Url: https://github.com/lolu-sholar
 */
-export default [
+module.exports = [
   {
     "id": 1,
     "fullName": "Person 1",

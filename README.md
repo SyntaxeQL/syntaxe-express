@@ -1,11 +1,11 @@
 <img src="assets/logo.svg" width="180px"/>
 <br/>
-Syntaxe middleware for Express.js
+Syntaxe middleware for Express.js and Nest.js
 <br/>
 <br/>
 
 [![MIT licensed](https://img.shields.io/badge/license-MIT-0091F7)](./LICENSE)
-![NPM Version](https://img.shields.io/badge/npm-v1.1.0-D50100)
+![NPM Version](https://img.shields.io/badge/npm-v1.2.1-D50100)
 ![Top Language](https://img.shields.io/badge/javascript-100%25-F0DC4E)
 
 <br/>
@@ -14,7 +14,7 @@ _Syntaxe is a declarative data querying library inspired by graphql._
 
 [PLEASE REFER TO THE ORIGINAL SYNTAXE DOCUMENTATION FOR A MORE DETAILED COVERAGE OF THE SYNTAXE SCHEMA AND ITS OPERATORS.](https://github.com/lolu-sholar/syntaxe/blob/master/README.md)
 
-Syntaxe Express is a middleware built on the original syntaxe engine to support declarative data fetching and querying when building server-side applications using express.js.
+Syntaxe Express is a middleware built on the original syntaxe engine to support declarative data fetching and querying when building server applications with express.js or nest.js.
 
 # Installation
 
@@ -26,15 +26,31 @@ npm install syntaxe-express
 
 # Example
 
-### Server
+## Server
+
+### Express (ESM)
 
 ```js
 import express from 'express';
-import SyntaxeIO from 'syntaxe-express';
 
-import appUsers from './data/app-users.js';
+import { SyntaxeIO } from 'syntaxe-express';
 
 const app = express();
+
+const users = [
+  {
+    "id": 1,
+    "fullName": "Person 1",
+    "lastLogin": "2020-03-03T06:39:55.795Z",
+    "package": "free"
+  },
+  {
+    "id": 2,
+    "fullName": "Person 2",
+    "lastLogin": "2023-08-29T04:31:09.580Z",
+    "package": "premium"
+  }
+]
 
 ////////////////////////////
 // Add syntaxe middleware //
@@ -51,13 +67,57 @@ app.get('/', (req, res) => {
 });
 
 app.get('/users', (req, res) => {
-  res.status(200).json(appUsers);
+  res.status(200).json(users);
 });
 
 const port = 8000;
 
 app.listen(port, () =>
   console.log(`Express app listening on port 8000.`));
+
+```
+
+### Express (CommonJs)
+
+```js
+const express = require('express');
+
+const { SyntaxeIO } = require('syntaxe-express');
+
+const app = express();
+
+////////////////////////////
+// Add syntaxe middleware //
+////////////////////////////
+SyntaxeIO.init({
+  enabled: true,
+  app: app
+});
+
+```
+
+### Nest
+
+```js
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+import { SyntaxeIO } from 'syntaxe-express';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  ////////////////////////////
+  // Add syntaxe middleware //
+  ////////////////////////////
+  SyntaxeIO.init({
+    enabled: true,
+    app: app
+  });
+  
+  await app.listen(8000);
+}
+bootstrap();
 
 ```
 
@@ -83,11 +143,7 @@ Syntaxe-Schema-Resolved: true
 
 Response Data:
 [
-  { id: 3, name: 'Person 3' },
-  { id: 4, name: 'Person 4' },
-  { id: 6, name: 'Person 6' },
-  { id: 8, name: 'Person 8' },
-  { id: 10, name: 'Person 10' }
+  { id: 2, name: 'Person 3' }
 ]
 */
 ```
@@ -98,7 +154,7 @@ Response Data:
 
 The first thing to look out for when communicating with a Syntaxe-enabled server application is the availability header `Syntaxe-Enabled`, which indicates whether Syntaxe is enabled for the application and ready to process queries sent from the client or not.
 
-The Syntaxe middleware always returns the availability header `Syntaxe-Enabled` once hooked to your express application.
+The Syntaxe middleware always returns the availability header `Syntaxe-Enabled` once hooked to your nest application.
 
 The value of the header is the value set to the `enabled` config property.
 

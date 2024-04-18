@@ -2,7 +2,7 @@
 Author: dr5hn
 Url: https://github.com/dr5hn/countries-states-cities-database
 */
-export default [
+module.exports = [
     {
         "id": 1,
         "name": "Afghanistan",
