@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
-import { SyntaxeIO } from '../../../../dist/cjs/index.js';
+import * as SyntaxeIO from '../../../../dist/cjs/index.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

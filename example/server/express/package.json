@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "description": "A simple express.js application.",
   "author": "Olushola Lana",
-  "type": "module",
   "license": "UNLICENSED",
   "scripts": {
     "start": "nodemon app.js"

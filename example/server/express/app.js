@@ -6,7 +6,7 @@ const countries = require('../../../data/countries.js');
 const countriesStates = require('../../../data/countries-states.js');
 const countriesStatesCities = require('../../../data/countries-states-cities.js');
 
-const { SyntaxeIO } = require('../../../dist/cjs/index.js');
+const SyntaxeIO = require('../../../dist/cjs/index.js');
 
 const app = express();
 

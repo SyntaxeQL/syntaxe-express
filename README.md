@@ -5,7 +5,7 @@ Syntaxe middleware for Express.js and Nest.js
 <br/>
 
 [![MIT licensed](https://img.shields.io/badge/license-MIT-0091F7)](./LICENSE)
-![NPM Version](https://img.shields.io/badge/npm-v1.2.1-D50100)
+![NPM Version](https://img.shields.io/badge/npm-v1.2.3-D50100)
 ![Top Language](https://img.shields.io/badge/javascript-100%25-F0DC4E)
 
 <br/>
@@ -33,7 +33,7 @@ npm install syntaxe-express
 ```js
 import express from 'express';
 
-import { SyntaxeIO } from 'syntaxe-express';
+import SyntaxeIO from 'syntaxe-express';
 
 const app = express();
 
@@ -82,7 +82,7 @@ app.listen(port, () =>
 ```js
 const express = require('express');
 
-const { SyntaxeIO } = require('syntaxe-express');
+const SyntaxeIO = require('syntaxe-express');
 
 const app = express();
 
@@ -102,7 +102,7 @@ SyntaxeIO.init({
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
-import { SyntaxeIO } from 'syntaxe-express';
+import * as SyntaxeIO from 'syntaxe-express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

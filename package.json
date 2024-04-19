@@ -1,6 +1,6 @@
 {
   "name": "syntaxe-express",
-  "version": "1.2.1",
+  "version": "1.2.3",
   "description": "A middleware built on the original syntaxe data query library for express.js and nest.js applications.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -8,7 +8,12 @@
   "scripts": {
     "test": "jest",
     "build": "babel src -d dist/cjs-temp",
-    "build:prod": "babel src -d dist/cjs-temp && npx minify-all-cli -s \"./dist/cjs-temp\" -d \"./dist/cjs\" && rmdir /s /q \"dist/cjs-temp\" && npx minify-all-cli -s \"./src\" -d \"./dist/esm\""
+    "build:cjs": "babel src -d dist/cjs-temp",
+    "minify:cjs": "npx minify-all-cli -s \"./dist/cjs-temp\" -d \"./dist/cjs\" && rmdir /s /q \"dist/cjs-temp\"",
+    "minify:esm": "npx minify-all-cli -s \"./src\" -d \"./dist/esm\"",
+    "move:index": "timeout /t 1 /nobreak && cd dist/cjs && move index.js main.js",
+    "create:index": "cd dist/cjs && echo \"use strict\";module.exports=require(\"./main\").default; > index.js",
+    "build:prod": "npm run build:cjs && npm run minify:cjs && npm run minify:esm && npm run move:index && npm run create:index"
   },
   "keywords": [
     "nodejs",
@@ -20,7 +25,9 @@
     "underfetching",
     "operators",
     "middleware",
-    "schema"
+    "schema",
+    "commonjs",
+    "modules"
   ],
   "author": "Olushola Lana",
   "license": "MIT",
