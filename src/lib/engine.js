@@ -53,8 +53,8 @@ const scanDirectives = (req, res) => {
 
 		return { resolve, schema, client };
 	} catch(err) {
-		res.set('Syntaxe-Schema-Resolved', false);
-		res.set('Syntaxe-Schema-Resolved-Error', String(err));
+		res.setHeader('Syntaxe-Schema-Resolved', false);
+		res.setHeader('Syntaxe-Schema-Resolved-Error', String(err));
 		console.error({
 			date: new Date(),
 			error: err
@@ -247,12 +247,12 @@ const walkThroughHandler = async({ data, res }) => {
 		}
 
 		// response header
-		res.set('Syntaxe-Schema-Resolved', true);
+		res.setHeader('Syntaxe-Schema-Resolved', true);
 
 		return JSON.stringify(result);
 	} catch(err) {
-		res.set('Syntaxe-Schema-Resolved', false);
-		res.set('Syntaxe-Schema-Resolved-Error', String(err));
+		res.setHeader('Syntaxe-Schema-Resolved', false);
+		res.setHeader('Syntaxe-Schema-Resolved-Error', String(err));
 		console.error({
 			date: new Date(),
 			error: err,

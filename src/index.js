@@ -10,28 +10,79 @@ SyntaxeIO.init = (config = null) => {
 };
 
 const SyntaxeRequestGate = class {
-	constructor(config = null){
-		config.app.set('syntaxeEnabledStatus', config.enabled);
-		config.app.use(this.#request);
+	constructor(config = null) {
+		this.#configureForAdapter(config);
 	}
 
-	async #request(req, res, next) {
-		const { resolve, schema, client } = scanDirectives(req, res);
-
-		const enabledStatus = req.app.get('syntaxeEnabledStatus');
-		
-		res.set('Syntaxe-Enabled', enabledStatus);
-
-		if (enabledStatus && resolve) {
-			res.syntaxeSchema = await filterSchema(schema);
-			if (res.syntaxeSchema.status)
-				new SyntaxeResponseGate(res);
-			else {
-				res.set('Syntaxe-Schema-Resolved', false);
-				res.set('Syntaxe-Schema-Resolved-Error', 'Query failed. Check your schema and try again.');
+	#configureForAdapter(config) {
+		try {
+			if (config.app && typeof config.app.getHttpAdapter == "function") {
+				const fastifyEnabled = Object.getOwnPropertySymbols(config.app.getHttpAdapter().getInstance())
+					.find(s => s.toString() == 'Symbol(fastify.state)');
+				if (fastifyEnabled && config.enabled)
+					this.#adjustToAdapterInstance(config);
 			}
+
+			const syntaxeProcessor = (config.enabled ? this.#syntaxeEnabled : this.#syntaxeDisabled);
+
+			config.app.use(syntaxeProcessor);
+		} catch(err) {
+			console.error(err);
+		}
+	}
+
+	#adjustToAdapterInstance(config) {
+		try {
+		  const instance = config.app.getHttpAdapter().getInstance();
+		  instance.addHook('onRequest', (request, reply, done) => {
+		    reply.setHeader = function (key, value) {
+		      return this.raw.setHeader(key, value);
+		    };
+
+		    reply.end = function () {
+		      this.raw.end();
+		    };
+
+		    request.res = reply;
+
+		    done();
+		  });
+		  instance.addHook('onSend', (request, reply, data, done) => {
+		  	reply.syntaxeSchema = request.raw.syntaxeSchema;
+		  	walkThroughHandler({ data, res: reply })
+		  	.then(result => {
+		  		done(null, result);
+		  	}).catch(e => done(null, data));
+		  });
+		} catch(err) {
+			console.error(err);
+		}
+	}
+
+	async #syntaxeEnabled(req, res, next) {
+		try {
+			const { resolve, schema, client } = scanDirectives(req, res);
+
+			res.setHeader('Syntaxe-Enabled', true);
+
+			if (resolve) {
+				res.syntaxeSchema = req.syntaxeSchema = await filterSchema(schema);
+				if (res.syntaxeSchema.status)
+					new SyntaxeResponseGate(res);
+				else {
+					res.setHeader('Syntaxe-Schema-Resolved', false);
+					res.setHeader('Syntaxe-Schema-Resolved-Error', 'Query failed. Check your schema and try again.');
+				}
+			}
+		} catch(err) {
+			console.error(err);
 		}
 
+		next();
+	}
+
+	async #syntaxeDisabled(req, res, next) {
+		res.setHeader('Syntaxe-Enabled', false);
 		next();
 	}
 };

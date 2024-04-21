@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.4] - 2024-04-21
+
+### Fixed
+
+- Bug fixed for nest.js fastify support
+
 ## [1.2.3] - 2024-04-19
 
 ### Changed

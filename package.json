@@ -1,6 +1,6 @@
 {
   "name": "syntaxe-express",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "A middleware built on the original syntaxe data query library for express.js and nest.js applications.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
