@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.5] - 2024-05-03
+
+### Fixed
+
+- Bug fixed for nest.js fastify requests with overlaping operations
+
+### Added
+
+- A new SyntaxeEngine class for better handling of concurrent requests
+
 ## [1.2.4] - 2024-04-21
 
 ### Fixed
@@ -25,4 +35,3 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - CommonJs support
-

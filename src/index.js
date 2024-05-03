@@ -1,4 +1,4 @@
-import { flags, scanDirectives, filterSchema, walkThroughHandler } from './lib/engine.js';
+import { flags, SyntaxeEngine } from './lib/engine.js';
 
 const SyntaxeIO = new Object();
 
@@ -48,11 +48,16 @@ const SyntaxeRequestGate = class {
 		    done();
 		  });
 		  instance.addHook('onSend', (request, reply, data, done) => {
-		  	reply.syntaxeSchema = request.raw.syntaxeSchema;
-		  	walkThroughHandler({ data, res: reply })
-		  	.then(result => {
-		  		done(null, result);
-		  	}).catch(e => done(null, data));
+		  	try {
+			  	reply.syntaxeSchema = request.raw.syntaxeSchema;
+			  	const syntaxeEngineState = request.raw.syntaxeEngineState;
+			  	const syntaxeEngine = new SyntaxeEngine(syntaxeEngineState);
+
+			  	syntaxeEngine.walkThroughHandler({ data, res: reply })
+				  	.then(result => {
+				  		done(null, result);
+				  	}).catch(e => done(null, data));
+			  } catch(err) {}
 		  });
 		} catch(err) {
 			console.error(err);
@@ -61,12 +66,17 @@ const SyntaxeRequestGate = class {
 
 	async #syntaxeEnabled(req, res, next) {
 		try {
-			const { resolve, schema, client } = scanDirectives(req, res);
+			const syntaxeEngine = new SyntaxeEngine();
+
+			const { resolve, schema, client } = syntaxeEngine.scanDirectives(req, res);
 
 			res.setHeader('Syntaxe-Enabled', true);
 
 			if (resolve) {
-				res.syntaxeSchema = req.syntaxeSchema = await filterSchema(schema);
+				res.syntaxeSchema = req.syntaxeSchema = await syntaxeEngine.filterSchema(schema);
+				res.syntaxeEngineInstance = syntaxeEngine;
+				req.syntaxeEngineState = syntaxeEngine.getEngineState();
+
 				if (res.syntaxeSchema.status)
 					new SyntaxeResponseGate(res);
 				else {
@@ -99,7 +109,8 @@ const SyntaxeResponseGate = class {
 
 	#delegate() {
 		return async(data) => {
-			this.#data = await walkThroughHandler({ data, res: this.#response }) ?? data;
+			const syntaxeEngine = this.#response.syntaxeEngineInstance;
+			this.#data = await syntaxeEngine.walkThroughHandler({ data, res: this.#response }) ?? data;
 			this.#respond();
 		}
 	}

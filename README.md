@@ -5,7 +5,7 @@ Syntaxe middleware for Express.js and Nest.js
 <br/>
 
 [![MIT licensed](https://img.shields.io/badge/license-MIT-0091F7)](./LICENSE)
-![NPM Version](https://img.shields.io/badge/npm-v1.2.4-D50100)
+![NPM Version](https://img.shields.io/badge/npm-v1.2.5-D50100)
 ![Top Language](https://img.shields.io/badge/javascript-100%25-F0DC4E)
 
 <br/>
